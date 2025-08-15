@@ -1,0 +1,13 @@
+[Unit]
+Description=AI Messenger Flask App (Perplexity API)
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=/opt/ai_messenger/app
+Environment=PERPLEXITY_API_KEY={{ service_api_key }}
+ExecStart=/opt/ai_messenger/venv/bin/python app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

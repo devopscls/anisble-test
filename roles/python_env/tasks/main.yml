@@ -1,0 +1,37 @@
+---
+- name: Install system packages
+  package:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - git
+      - unzip
+    state: present
+  become: yes
+
+- name: Create application dir
+  file:
+    path: /opt/ai_messenger
+    state: directory
+    owner: ec2-user
+    group: ec2-user
+  become: yes
+
+- name: Copy requirements.txt
+  copy:
+    src: requirements.txt
+    dest: /opt/ai_messenger/requirements.txt
+  become: yes
+
+- name: Create virtual environment
+  command: python3 -m venv /opt/ai_messenger/venv
+  args:
+    creates: /opt/ai_messenger/venv
+  become: yes
+
+- name: Install Python dependencies
+  pip:
+    requirements: /opt/ai_messenger/requirements.txt
+    virtualenv: /opt/ai_messenger/venv
+  become: yes

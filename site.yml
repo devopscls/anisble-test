@@ -1,0 +1,7 @@
+- hosts: ansible_test
+  become: yes
+  vars:
+    pplx_api_key: "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"
+  roles:
+    - python_env
+    - app
