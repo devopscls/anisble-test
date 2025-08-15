@@ -1,0 +1,43 @@
+---
+- name: Install EPEL repo
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install Nginx and Certbot
+  yum:
+    name:
+      - nginx
+      - certbot
+      - python3-certbot-nginx
+    state: latest
+
+- name: Ensure Nginx started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Deploy Nginx reverse proxy config
+  template:
+    src: nginx_reverse_proxy.conf.j2
+    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
+    mode: '0644'
+  notify: Reload Nginx
+
+- name: Test Nginx configuration
+  command: nginx -t
+  register: nginx_test
+  failed_when: nginx_test.rc != 0
+
+- name: Reload Nginx after config test
+  service:
+    name: nginx
+    state: reloaded
+
+- name: Obtain & install SSL certificate with Certbot
+  command: >
+    certbot --nginx --non-interactive --agree-tos --redirect
+    --email your-email@avsdevops.com
+    -d {{ domain_name }}
+  notify: Reload Nginx

@@ -6,7 +6,6 @@
     owner: ec2-user
     group: ec2-user
     mode: '0755'
-  become: yes
 
 - name: Deploy systemd service file with API key
   template:
@@ -14,16 +13,13 @@
     dest: /etc/systemd/system/ai_messenger.service
   vars:
     service_api_key: "{{ pplx_api_key }}"
-  become: yes
 
 - name: Reload systemd daemon
   systemd:
     daemon_reload: yes
-  become: yes
 
 - name: Enable and start AI messenger service
   systemd:
     name: ai_messenger
     enabled: yes
     state: restarted
-  become: yes

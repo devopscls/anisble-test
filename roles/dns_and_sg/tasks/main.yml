@@ -1,0 +1,30 @@
+---
+- name: Ensure Route53 DNS record exists
+  amazon.aws.route53:
+    state: present
+    zone: "{{ route53_zone }}"
+    record: "{{ route53_record }}"
+    type: "{{ route53_record_type }}"
+    ttl: "{{ route53_ttl }}"
+    value: "{{ ec2_instance_ips }}"
+    wait: true
+
+- name: Manage security groups inbound rules (HTTP)
+  amazon.aws.ec2_security_group_rule:
+    security_group_id: "{{ item }}"
+    cidr_ip: 0.0.0.0/0
+    protocol: tcp
+    from_port: 80
+    to_port: 80
+    state: present
+  loop: "{{ security_group_ids }}"
+
+- name: Manage security groups inbound rules (HTTPS)
+  amazon.aws.ec2_security_group_rule:
+    security_group_id: "{{ item }}"
+    cidr_ip: 0.0.0.0/0
+    protocol: tcp
+    from_port: 443
+    to_port: 443
+    state: present
+  loop: "{{ security_group_ids }}"

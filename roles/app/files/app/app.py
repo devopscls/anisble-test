@@ -14,7 +14,6 @@ def ask():
     question = request.json.get('question')
     if not question:
         return jsonify({'answer': 'Please ask a question.'})
-
     try:
         headers = {
             'Authorization': f'Bearer {PPLX_API_KEY}',
@@ -30,7 +29,6 @@ def ask():
         answer = data['choices'][0]['message']['content']
     except Exception as e:
         answer = f"Error: {str(e)}"
-
     return jsonify({'answer': answer})
 
 if __name__ == '__main__':
